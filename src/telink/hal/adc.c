@@ -59,7 +59,8 @@ uint16_t hal_adc_read_pin_mv(hal_gpio_pin_t pin) {
     drv_adc_enable(false);
 
     // Restore previous ADC state if it was initialized
-    if (saved_pin != HAL_INVALID_PIN && saved_initialized) {
+    // Only restore when ADC was previously configured (adc_initialized was true)
+    if (saved_initialized) {
         drv_adc_init();
         if (saved_input == HAL_ADC_INPUT_VBAT) {
             drv_adc_mode_pin_set(DRV_ADC_VBAT_MODE, (GPIO_PinTypeDef)saved_pin);

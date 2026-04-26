@@ -14,6 +14,10 @@ void btn_update_debounced(button_t *button, uint8_t is_pressed,
 /**
  * Read button state, using ADC if configured for noisy input environments.
  * Returns 1 for HIGH state, 0 for LOW state.
+ *
+ * For ADC mode with pull-up resistors (typical configuration):
+ * - When button is released: pin voltage is HIGH (~3.3V), return 1
+ * - When button is pressed: pin is shorted to ground, voltage is LOW, return 0
  */
 static uint8_t btn_read_state(button_t *button) {
     if (button->use_adc) {

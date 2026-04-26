@@ -10,6 +10,10 @@ typedef void (*ev_button_multi_press_callback_t)(void *, uint8_t);
 
 #define DEBOUNCE_DELAY_MS    50
 
+// ADC threshold in millivolts for detecting button press/release
+// Below this threshold = pressed (LOW), above = released (HIGH)
+#define BTN_ADC_THRESHOLD_MV    500
+
 typedef struct {
     hal_gpio_pin_t                   pin;
     uint8_t                          pressed_when_high;
@@ -29,6 +33,7 @@ typedef struct {
     ev_button_callback_t             on_release;
     ev_button_multi_press_callback_t on_multi_press;
     void *                           callback_param;
+    uint8_t                          use_adc; // Use ADC-based reading for noisy inputs
 } button_t;
 
 void btn_init(button_t *button);

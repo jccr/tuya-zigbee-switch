@@ -1,4 +1,5 @@
 #include "button.h"
+#include "hal/adc.h"
 #include "hal/printf_selector.h"
 #include "hal/tasks.h"
 #include "hal/timer.h"
@@ -10,11 +11,24 @@ void _btn_update_callback(void *arg);
 void btn_update_debounced(button_t *button, uint8_t is_pressed,
                           uint32_t changed_at);
 
+/**
+ * Read button state, using ADC if configured for noisy input environments.
+ * Returns 1 for HIGH state, 0 for LOW state.
+ */
+static uint8_t btn_read_state(button_t *button) {
+    if (button->use_adc) {
+        uint16_t voltage_mv = hal_adc_read_pin_mv(button->pin);
+        // LOW if voltage is below threshold, HIGH otherwise
+        return (voltage_mv >= BTN_ADC_THRESHOLD_MV) ? 1 : 0;
+    }
+    return hal_gpio_read(button->pin);
+}
+
 void btn_init(button_t *button) {
     // During device startup, button may be already pressed, but this should not
     // be detected as user press. So, to avoid such situation, special init is
     // required.
-    uint8_t state = hal_gpio_read(button->pin);
+    uint8_t state = btn_read_state(button);
 
     if (state == button->pressed_when_high) {
         button->pressed      = true;
@@ -29,7 +43,7 @@ void btn_init(button_t *button) {
 
 void _btn_gpio_callback(hal_gpio_pin_t pin, void *arg) {
     button_t *button    = (button_t *)arg;
-    uint8_t   new_state = hal_gpio_read(button->pin);
+    uint8_t   new_state = btn_read_state(button);
 
     if (new_state == button->debounce_last_state) {
         return;

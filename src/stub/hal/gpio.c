@@ -148,10 +148,6 @@ uint8_t stub_gpio_get_output(hal_gpio_pin_t gpio_pin) {
     return gpio_pins[gpio_pin].value;
 }
 
-void hal_gpio_restore(hal_gpio_pin_t gpio_pin) {
-    (void)gpio_pin;
-}
-
 // Helper funcs
 
 void ensure_valid_pin(hal_gpio_pin_t gpio_pin) {

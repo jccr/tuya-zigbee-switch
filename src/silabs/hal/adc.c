@@ -247,7 +247,7 @@ static uint16_t hal_adc_read_supply_mv(void) {
     return hal_adc_raw_to_mv(raw, IADC_INT_REF_MV * IADC_INTERNAL_DIVIDER);
 }
 
-static uint16_t hal_adc_read_pin_internal(hal_gpio_pin_t pin) {
+static uint16_t hal_adc_read_pin_mv(hal_gpio_pin_t pin) {
     uint16_t avdd_mv;
     uint16_t raw;
 
@@ -283,9 +283,5 @@ uint16_t hal_adc_read_mv() {
         return hal_adc_read_supply_mv();
     }
 
-    return hal_adc_read_pin_internal(s_adc_pin);
-}
-
-uint16_t hal_adc_read_pin_mv(hal_gpio_pin_t pin) {
-    return hal_adc_read_pin_internal(pin);
+    return hal_adc_read_pin_mv(s_adc_pin);
 }

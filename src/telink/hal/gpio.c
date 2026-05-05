@@ -207,14 +207,4 @@ hal_gpio_pull_t hal_gpio_parse_pull(const char *pull_str) {
     }
 }
 
-void hal_gpio_restore(hal_gpio_pin_t gpio_pin) {
-    gpio_config_t *config = find_gpio_config(gpio_pin);
-    if (config) {
-        gpio_init_hw(config->pin, config->is_input, config->pull);
-        if (!config->is_input) {
-            gpio_write((GPIO_PinTypeDef)config->pin, config->value);
-        }
-    }
-}
-
 // GPIO interrupt callbacks

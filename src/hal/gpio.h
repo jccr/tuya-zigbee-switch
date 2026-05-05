@@ -94,11 +94,4 @@ hal_gpio_pin_t hal_gpio_parse_pin(const char *s);
  */
 hal_gpio_pull_t hal_gpio_parse_pull(const char *pull_str);
 
-/**
- * Restore GPIO pin to its previously initialized state.
- * Useful after temporarily using the pin for other functions like ADC.
- * @param gpio_pin GPIO pin identifier
- */
-void hal_gpio_restore(hal_gpio_pin_t gpio_pin);
-
 #endif

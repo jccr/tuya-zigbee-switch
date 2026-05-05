@@ -203,9 +203,3 @@ hal_gpio_pull_t hal_gpio_parse_pull(const char *pull_str) {
     }
     return HAL_GPIO_PULL_INVALID;
 }
-
-void hal_gpio_restore(hal_gpio_pin_t gpio_pin) {
-    // Note: Silabs currently doesn't track pin config for restoration.
-    // If needed, we should add a pin_configs table similar to Telink.
-    (void)gpio_pin;
-}

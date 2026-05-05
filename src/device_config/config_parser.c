@@ -139,13 +139,6 @@ void parse_config() {
             buttons[buttons_cnt].multi_press_duration_ms = 800;
             buttons[buttons_cnt].debounce_delay_ms       = debounce_ms;
             buttons[buttons_cnt].on_long_press           = on_reset_clicked;
-
-            // Check for ADC mode suffix 'a' after the pull resistor character
-            // e.g., BA0ua means button on A0, pull-up, ADC mode
-            if (entry[4] == 'a') {
-                buttons[buttons_cnt].use_adc = 1;
-            }
-
             buttons_cnt++;
         } else if (entry[0] == 'L') {
             hal_gpio_pin_t pin = hal_gpio_parse_pin(entry + 1);
@@ -204,13 +197,6 @@ void parse_config() {
 
             if (entry[3] == 'd')
                 buttons[buttons_cnt].pressed_when_high = 1;
-
-            // Check for ADC mode suffix 'a' after the pull resistor character
-            // e.g., SA0ua means switch on A0, pull-up, ADC mode
-            if (entry[4] == 'a') {
-                buttons[buttons_cnt].use_adc = 1;
-            }
-
             switch_clusters[switch_clusters_cnt].switch_idx = switch_clusters_cnt;
             switch_clusters[switch_clusters_cnt].mode       =
                 ZCL_ONOFF_CONFIGURATION_SWITCH_TYPE_TOGGLE;

@@ -353,7 +353,10 @@ static int cmd_step_time(int argc, char **argv) {
         io_res_err("bad_step=%s", argv[1]);
         return -1;
     }
-    stub_millis_step((uint64_t)step);
+    for (long i = 0; i < step; i++) {
+        stub_millis_step(1);
+        stub_app_poll();
+    }
     io_res_ok("stepped_ms=%ld", step);
     return 0;
 }

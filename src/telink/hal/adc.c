@@ -44,40 +44,29 @@ uint16_t hal_adc_read_pin_mv(hal_gpio_pin_t pin) {
         return 0;
     }
 
-    // Save current ADC state
-    hal_gpio_pin_t  saved_pin         = adc_pin;
-    hal_adc_input_t saved_input       = adc_input;
-    bool            saved_initialized = adc_initialized;
-
-    // Temporarily configure ADC for the requested pin.
-    // Avoid re-initializing if already done.
-    static bool drv_initialized = false;
-    if (!drv_initialized && !saved_initialized) {
+    // Ensure ADC is initialized (even if just for this pin)
+    if (!adc_initialized) {
         drv_adc_init();
-        drv_initialized = true;
+        adc_initialized = true;
     }
+
+    // Temporarily switch ADC multiplexer to the requested pin
     drv_adc_mode_pin_set(DRV_ADC_BASE_MODE, (GPIO_PinTypeDef)pin);
 
     drv_adc_enable(true);
-    sleep_us(200);  // Sufficient settling time for most pins
-
-    // Average 2 samples for basic noise filtering
-    uint32_t sum = drv_get_adc_data();
-    sleep_us(50);
-    sum += drv_get_adc_data();
-    uint16_t voltage_mv = (uint16_t)(sum / 2);
+    sleep_us(200);  // Settling time
+    uint16_t voltage_mv = drv_get_adc_data();
     drv_adc_enable(false);
 
-    // Restore GPIO digital function and state immediately
+    // Restore GPIO digital function immediately
     hal_gpio_restore(pin);
 
-    // Restore previous ADC state if it was initialized (e.g., for battery)
-    if (saved_initialized) {
-        drv_adc_init();
-        if (saved_input == HAL_ADC_INPUT_VBAT) {
-            drv_adc_mode_pin_set(DRV_ADC_VBAT_MODE, (GPIO_PinTypeDef)saved_pin);
+    // Restore original ADC multiplexer setting if it was configured (e.g. for battery)
+    if (adc_pin != HAL_INVALID_PIN) {
+        if (adc_input == HAL_ADC_INPUT_VBAT) {
+            drv_adc_mode_pin_set(DRV_ADC_VBAT_MODE, (GPIO_PinTypeDef)adc_pin);
         } else {
-            drv_adc_mode_pin_set(DRV_ADC_BASE_MODE, (GPIO_PinTypeDef)saved_pin);
+            drv_adc_mode_pin_set(DRV_ADC_BASE_MODE, (GPIO_PinTypeDef)adc_pin);
         }
     }
 

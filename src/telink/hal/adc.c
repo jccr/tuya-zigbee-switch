@@ -51,24 +51,24 @@ uint16_t hal_adc_read_pin_mv(hal_gpio_pin_t pin) {
 
     // Temporarily configure ADC for the requested pin.
     // Avoid re-initializing if already done.
-    if (!saved_initialized) {
+    static bool drv_initialized = false;
+    if (!drv_initialized && !saved_initialized) {
         drv_adc_init();
+        drv_initialized = true;
     }
     drv_adc_mode_pin_set(DRV_ADC_BASE_MODE, (GPIO_PinTypeDef)pin);
 
     drv_adc_enable(true);
-    sleep_us(500);  // Allow more settling time for the multiplexer/pin
+    sleep_us(200);  // Sufficient settling time for most pins
 
-    // Average multiple samples to filter out transient noise
-    uint32_t sum = 0;
-    for (int i = 0; i < 4; i++) {
-        sum += drv_get_adc_data();
-        sleep_us(50);
-    }
-    uint16_t voltage_mv = (uint16_t)(sum / 4);
+    // Average 2 samples for basic noise filtering
+    uint32_t sum = drv_get_adc_data();
+    sleep_us(50);
+    sum += drv_get_adc_data();
+    uint16_t voltage_mv = (uint16_t)(sum / 2);
     drv_adc_enable(false);
 
-    // Restore GPIO digital function and state immediately after reading
+    // Restore GPIO digital function and state immediately
     hal_gpio_restore(pin);
 
     // Restore previous ADC state if it was initialized (e.g., for battery)

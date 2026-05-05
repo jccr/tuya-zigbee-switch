@@ -12,7 +12,7 @@ typedef void (*ev_button_multi_press_callback_t)(void *, uint8_t);
 
 // ADC threshold in millivolts for detecting button press/release
 // Below this threshold = pressed (LOW), above = released (HIGH)
-#define BTN_ADC_THRESHOLD_MV    1000
+#define BTN_ADC_THRESHOLD_MV    1500
 
 typedef struct {
     hal_gpio_pin_t                   pin;

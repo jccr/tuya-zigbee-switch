@@ -101,6 +101,7 @@ void btn_update_debounced(button_t *button, uint8_t is_pressed,
             button->on_release(button->callback_param);
         }
     }
+    button->pressed = is_pressed;
 
     uint32_t now = hal_millis();
     if (is_pressed && !button->long_pressed &&

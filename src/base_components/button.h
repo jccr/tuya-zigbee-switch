@@ -26,6 +26,7 @@ typedef struct {
     uint8_t                          multi_press_cnt;
     uint16_t                         debounce_delay_ms;
     hal_task_t                       update_task;
+    hal_task_t                       poll_task;
     uint8_t                          debounce_last_state;
     uint32_t                         debounce_last_change;
     ev_button_callback_t             on_press;

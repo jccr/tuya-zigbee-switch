@@ -11,6 +11,8 @@ void _btn_update_callback(void *arg);
 void btn_update_debounced(button_t *button, uint8_t is_pressed,
                           uint32_t changed_at);
 
+void _btn_poll_task(void *arg);
+
 /**
  * Read button state, using ADC if configured for noisy input environments.
  * Returns 1 for HIGH state, 0 for LOW state.
@@ -42,12 +44,32 @@ void btn_init(button_t *button) {
     button->update_task.handler = _btn_update_callback;
     button->update_task.arg     = button;
     hal_tasks_init(&button->update_task);
-    hal_gpio_callback(button->pin, _btn_gpio_callback, button);
+
+    if (button->use_adc) {
+        button->poll_task.handler = _btn_poll_task;
+        button->poll_task.arg     = button;
+        hal_tasks_init(&button->poll_task);
+        hal_tasks_schedule(&button->poll_task, 50);
+    } else {
+        hal_gpio_callback(button->pin, _btn_gpio_callback, button);
+    }
+}
+
+void _btn_poll_task(void *arg) {
+    // Call the core logic of the callback with a dummy pin
+    _btn_gpio_callback(HAL_INVALID_PIN, arg);
 }
 
 void _btn_gpio_callback(hal_gpio_pin_t pin, void *arg) {
-    button_t *button    = (button_t *)arg;
-    uint8_t   new_state = btn_read_state(button);
+    button_t *button = (button_t *)arg;
+    
+    // For ADC polling, the pin parameter is irrelevant (often HAL_INVALID_PIN)
+    uint8_t new_state = btn_read_state(button);
+
+    if (button->use_adc) {
+        // Reschedule poll task for continuous monitoring
+        hal_tasks_schedule(&button->poll_task, 50);
+    }
 
     if (new_state == button->debounce_last_state) {
         return;

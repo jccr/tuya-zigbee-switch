@@ -53,9 +53,25 @@ uint16_t hal_adc_read_pin_mv(hal_gpio_pin_t pin) {
     // Temporarily switch ADC multiplexer to the requested pin
     drv_adc_mode_pin_set(DRV_ADC_BASE_MODE, (GPIO_PinTypeDef)pin);
 
+    // drv_adc_mode_pin_set configures the pin as analog, which typically disables
+    // the internal pull-up resistor. We must re-enable it to prevent floating.
+    gpio_setup_up_down_resistor((GPIO_PinTypeDef)pin, PM_PIN_PULLUP_10K);
+
     drv_adc_enable(true);
     sleep_us(200);  // Settling time
-    uint16_t voltage_mv = drv_get_adc_data();
+    
+    // Discard first two samples which are inaccurate after switching channels
+    drv_get_adc_data();
+    drv_get_adc_data();
+
+    // Average 4 samples for better noise filtering
+    uint32_t sum = 0;
+    for (int i = 0; i < 4; i++) {
+        sum += drv_get_adc_data();
+        sleep_us(50);
+    }
+    uint16_t voltage_mv = (uint16_t)(sum / 4);
+
     drv_adc_enable(false);
 
     // Restore GPIO digital function immediately

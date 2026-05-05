@@ -1,12 +1,12 @@
 [
   {
-    "fileName": "tlc_switch-1.1.2-b08aa768.zigbee",
-    "fileVersion": 285356055,
-    "fileSize": 181426,
-    "url": "https://github.com/jccr/tuya-zigbee-switch/raw/fc069d8bb9415d8b9e8a8a674dd59936d8d17ce6/bin/router/MODULE_HOBEIAN_TS0001_2A/tlc_switch-1.1.2-b08aa768.zigbee",
+    "fileName": "tlc_switch-1.1.2-8881209f.zigbee",
+    "fileVersion": 285356058,
+    "fileSize": 179986,
+    "url": "https://github.com/jccr/tuya-zigbee-switch/raw/refs/heads/build_branch/bin/router/MODULE_HOBEIAN_TS0001_2A/tlc_switch-1.1.2-8881209f.zigbee",
     "imageType": 45579,
     "manufacturerCode": 4417,
-    "sha512": "99787a3c0cd5b63f062693476a76e02fbd595a727931e586c121bb314a729359ec2fc673eca39cafc23dd41b583b7a869e01de0a483e9b059aa194c04b15c47a",
+    "sha512": "f0b7ac446d09999003c52728ef4d915e09f2ffa1ba448ffd48292e06e7b3bf7ae40d0b4472be813cbaddd46a9696fa8e5bf9558ce90fae5abc8aaf05f3a0bd43",
     "otaHeaderString": "Telink OTA Image\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
     "manufacturerName": [
       "ZG-301Z"

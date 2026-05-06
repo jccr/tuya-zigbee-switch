@@ -1318,7 +1318,7 @@ MODULE_HOBEIAN_MINI_TS0001:
   tuya_module: none
   mcu_family: Telink
   mcu: TLSR8253F512AT32
-  config_str: ZG-301Z;TS0001-HOBM;BD7u;LD4i;SB6u;RA1;
+  config_str: ZG-301Z;TS0001-HOBM;BD7u;LD4i;SB6a;RA1;
   alt_config_str: null
   old_manufacturer_names: null
   old_zb_models: null
@@ -1347,7 +1347,7 @@ MODULE_HOBEIAN_TS0001_1:
   tuya_module: none
   mcu_family: Telink
   mcu: TLSR8253F512AT32
-  config_str: q6a3tepg;TS0001-HOB1;BB1u;LD4i;SB6u;RA1;
+  config_str: q6a3tepg;TS0001-HOB1;BB1u;LD4i;SB6a;RA1;
   alt_config_str: null
   old_manufacturer_names: null
   old_zb_models: null
@@ -1374,7 +1374,7 @@ MODULE_HOBEIAN_TS0001_2:
   tuya_module: none
   mcu_family: Telink
   mcu: TLSR8253F512AT32
-  config_str: ZG-301Z;TS0001-HOB;BB1u;LD4i;SB6u;RA1;
+  config_str: ZG-301Z;TS0001-HOB;BB1u;LD4i;SB6a;RA1;
   alt_config_str: null
   old_manufacturer_names: null
   old_zb_models: null

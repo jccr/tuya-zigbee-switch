@@ -1,4 +1,5 @@
 #include "button.h"
+#include "hal/adc.h"
 #include "hal/printf_selector.h"
 #include "hal/tasks.h"
 #include "hal/timer.h"
@@ -7,14 +8,24 @@
 
 void _btn_gpio_callback(hal_gpio_pin_t pin, void *arg);
 void _btn_update_callback(void *arg);
+void _btn_poll_task(void *arg);
 void btn_update_debounced(button_t *button, uint8_t is_pressed,
                           uint32_t changed_at);
+
+static uint8_t _btn_read_state(button_t *button) {
+    if (button->use_adc) {
+        // Single-channel HAL: re-select this button's pin before each read.
+        hal_adc_init(HAL_ADC_INPUT_PIN, button->pin);
+        return (hal_adc_read_mv() >= BTN_ADC_THRESHOLD_MV) ? 1 : 0;
+    }
+    return hal_gpio_read(button->pin);
+}
 
 void btn_init(button_t *button) {
     // During device startup, button may be already pressed, but this should not
     // be detected as user press. So, to avoid such situation, special init is
     // required.
-    uint8_t state = hal_gpio_read(button->pin);
+    uint8_t state = _btn_read_state(button);
 
     if (state == button->pressed_when_high) {
         button->pressed      = true;
@@ -24,7 +35,15 @@ void btn_init(button_t *button) {
     button->update_task.handler = _btn_update_callback;
     button->update_task.arg     = button;
     hal_tasks_init(&button->update_task);
-    hal_gpio_callback(button->pin, _btn_gpio_callback, button);
+
+    if (button->use_adc) {
+        button->poll_task.handler = _btn_poll_task;
+        button->poll_task.arg     = button;
+        hal_tasks_init(&button->poll_task);
+        hal_tasks_schedule(&button->poll_task, BTN_ADC_POLL_MS);
+    } else {
+        hal_gpio_callback(button->pin, _btn_gpio_callback, button);
+    }
 }
 
 void _btn_gpio_callback(hal_gpio_pin_t pin, void *arg) {
@@ -39,6 +58,19 @@ void _btn_gpio_callback(hal_gpio_pin_t pin, void *arg) {
     button->debounce_last_state  = new_state;
     button->debounce_last_change = hal_millis();
     hal_tasks_schedule(&button->update_task, button->debounce_delay_ms);
+}
+
+void _btn_poll_task(void *arg) {
+    button_t *button    = (button_t *)arg;
+    uint8_t   new_state = _btn_read_state(button);
+
+    if (new_state != button->debounce_last_state) {
+        hal_tasks_unschedule(&button->update_task);
+        button->debounce_last_state  = new_state;
+        button->debounce_last_change = hal_millis();
+        hal_tasks_schedule(&button->update_task, button->debounce_delay_ms);
+    }
+    hal_tasks_schedule(&button->poll_task, BTN_ADC_POLL_MS);
 }
 
 void _btn_update_callback(void *arg) {

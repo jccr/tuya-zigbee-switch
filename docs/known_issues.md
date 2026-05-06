@@ -7,7 +7,8 @@
 ### Bugs
 
 - Switch randomly toggles on TLSR8253 512KB devices ([#289](https://github.com/romasku/tuya-zigbee-switch/issues/289))
-  (HOBEIAN and Zbeacon)
+  - Mitigation: HOBEIAN modules opt in to ADC-based switch reads via the new `SB<pin>a` config flag (digital `gpio_read` is unreliable on TLSR8253).
+  - Zbeacon: pending hardware verification.
 - *Power-on behavior* doesn't fully work on some devices
 - Telink Router sometimes unavailable? ([#255](https://github.com/romasku/tuya-zigbee-switch/issues/255))
 - *momentary_nc* not working after power loss.  

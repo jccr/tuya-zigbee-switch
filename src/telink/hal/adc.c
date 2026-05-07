@@ -35,5 +35,6 @@ uint16_t hal_adc_read_mv() {
     sleep_us(100);  // TODO do actually need this?
     uint16_t voltage_mv = drv_get_adc_data();
     drv_adc_enable(false);
+    printf("Battery voltage (mV): %d\r\n", voltage_mv);
     return voltage_mv;
 }

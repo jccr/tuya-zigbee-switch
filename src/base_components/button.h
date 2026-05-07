@@ -8,16 +8,11 @@
 typedef void (*ev_button_callback_t)(void *);
 typedef void (*ev_button_multi_press_callback_t)(void *, uint8_t);
 
-#define DEBOUNCE_DELAY_MS       50
-// ADC button (use_adc=1): pulled-up release ~3300mV, ground-pressed ~0mV.
-// One ADC read happens at debounce commit to filter noise glitches the digital
-// ISR captured.
-#define BTN_ADC_THRESHOLD_MV    1500
+#define DEBOUNCE_DELAY_MS    50
 
 typedef struct {
     hal_gpio_pin_t                   pin;
     uint8_t                          pressed_when_high;
-    uint8_t                          use_adc;
     uint8_t                          pressed;
     uint8_t                          long_pressed;
     uint32_t                         pressed_at_ms;

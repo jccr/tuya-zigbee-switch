@@ -1,6 +1,5 @@
 #include "battery.h"
 #include "hal/adc.h"
-#include "hal/printf_selector.h"
 
 void battery_init(battery_t *battery) {
     hal_adc_init(HAL_ADC_INPUT_VBAT, battery->pin);
@@ -11,7 +10,6 @@ void battery_init(battery_t *battery) {
 
 battery_status_t battery_get_status(battery_t *battery) {
     uint16_t         voltage_mv = hal_adc_read_mv();
-    printf("Battery voltage (mV): %d\r\n", voltage_mv);
     battery_status_t status     = {
         .voltage_mv = voltage_mv
     };

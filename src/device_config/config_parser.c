@@ -185,12 +185,8 @@ void parse_config() {
             }
             leds_cnt++;
         } else if (entry[0] == 'S') {
-            hal_gpio_pin_t  pin = hal_gpio_parse_pin(entry + 1);
-            // 'a' selects ADC mode with internal 10K pull-up (issue #289 noisy
-            // TLSR8253 fix). All other flags use the standard pull parser.
-            hal_gpio_pull_t pull = (entry[3] == 'a')
-                                       ? HAL_GPIO_PULL_UP
-                                       : hal_gpio_parse_pull(entry + 3);
+            hal_gpio_pin_t  pin  = hal_gpio_parse_pin(entry + 1);
+            hal_gpio_pull_t pull = hal_gpio_parse_pull(entry + 3);
             hal_gpio_init(pin, 1, pull);
 
             buttons[buttons_cnt].pin = pin;
@@ -201,8 +197,6 @@ void parse_config() {
 
             if (entry[3] == 'd')
                 buttons[buttons_cnt].pressed_when_high = 1;
-            if (entry[3] == 'a')
-                buttons[buttons_cnt].use_adc = 1;
             switch_clusters[switch_clusters_cnt].switch_idx = switch_clusters_cnt;
             switch_clusters[switch_clusters_cnt].mode       =
                 ZCL_ONOFF_CONFIGURATION_SWITCH_TYPE_TOGGLE;

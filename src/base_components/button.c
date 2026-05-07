@@ -1,5 +1,4 @@
 #include "button.h"
-#include "hal/adc.h"
 #include "hal/printf_selector.h"
 #include "hal/tasks.h"
 #include "hal/timer.h"
@@ -12,12 +11,6 @@ void btn_update_debounced(button_t *button, uint8_t is_pressed,
                           uint32_t changed_at);
 
 void btn_init(button_t *button) {
-    // ADC channel is bound here once. Verification happens in
-    // _btn_update_callback.
-    if (button->use_adc) {
-        hal_adc_init(HAL_ADC_INPUT_PIN, button->pin);
-    }
-
     // During device startup, button may be already pressed, but this should not
     // be detected as user press. So, to avoid such situation, special init is
     // required.
@@ -51,17 +44,14 @@ void _btn_gpio_callback(hal_gpio_pin_t pin, void *arg) {
 void _btn_update_callback(void *arg) {
     button_t *button = (button_t *)arg;
 
-    // For ADC buttons (issue #289 noisy TLSR8253): verify the ISR-captured
-    // state with one ADC read. If they disagree, the digital edge was a
-    // transient glitch — drop it and re-arm with the verified value.
-    if (button->use_adc) {
-        uint8_t verified =
-            (hal_adc_read_mv() >= BTN_ADC_THRESHOLD_MV) ? 1 : 0;
-        if (verified != button->debounce_last_state) {
-            button->debounce_last_state  = verified;
-            button->debounce_last_change = hal_millis();
-            return;
-        }
+    // Re-read at commit to filter brief noise glitches (issue #289).
+    // The ISR captured a single sample at the edge; if the line has reverted
+    // by now (sub-debounce-window glitch), drop the event.
+    uint8_t verified = hal_gpio_read(button->pin);
+    if (verified != button->debounce_last_state) {
+        button->debounce_last_state  = verified;
+        button->debounce_last_change = hal_millis();
+        return;
     }
 
     btn_update_debounced(button,

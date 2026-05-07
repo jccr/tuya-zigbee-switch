@@ -232,7 +232,7 @@ class CustomWindowCoveringCluster(CustomCluster, WindowCovering):
 CONFIGS = [
     "imaccztn1;TS0004-MC1;LC3i;SD7u;RD4;SC0u;RA0;SB5u;RD2;SB7u;RC2;M;",
     "imaccztn2;TS0004-MC3;LC3i;SD7u;RD4;SC0u;RA0;SB5u;RD2;SB7u;RC2;M;",
-    "ZG-301Z;TS0001-HOB;BB1u;LD4i;SB6a;RA1;",
+    "ZG-301Z;TS0001-HOB;BB1u;LD4i;SB6u;RA1;",
     "khmapq4n;TS0001-SB;BA0u;LC0;SB4u;RC2;",
     "zbfya6h0;TS0002-C;BA0u;LC0;SB4u;RC2;SB5u;RC3;",
     "zbfya6h0;TS0002-SB;BA0u;LC0;SB4u;RC2;SB5u;RC3;",
